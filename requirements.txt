@@ -1,0 +1,12 @@
+pandas
+requests
+sqlalchemy
+pymysql
+python-dotenv
+
+pyspark
+delta-spark
+
+selenium
+webdriver-manager
+boto3
