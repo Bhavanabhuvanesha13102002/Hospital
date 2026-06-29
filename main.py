@@ -1,6 +1,6 @@
 from config.datasets import DATASETS
 
-from pipeline.ingestion.csv_downloader import CSVDownloader
+from pipeline.ingestion.downloader import CSVDownloader
 
 from spark.bronze_job import run_bronze_pipeline
 
