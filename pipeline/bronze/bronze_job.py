@@ -1,6 +1,5 @@
 from delta.tables import DeltaTable
 from pyspark.sql.functions import current_timestamp, lit, col
-from pyspark.sql.types import StructType
 
 
 METADATA_COLUMNS = ["source_quarter", "ingestion_timestamp"]
@@ -17,6 +16,23 @@ def read_raw_data(spark, dataset):
     )
 
     print(f"[INFO] Raw count: {df.count()}")
+    return df
+
+
+def normalize_column_names(df):
+    for column_name in df.columns:
+        clean_name = (
+            column_name.strip()
+            .lower()
+            .replace(" ", "_")
+            .replace("/", "_")
+            .replace("-", "_")
+            .replace("(", "")
+            .replace(")", "")
+        )
+
+        df = df.withColumnRenamed(column_name, clean_name)
+
     return df
 
 
@@ -113,11 +129,7 @@ def get_new_records(current_df, existing_df, dataset):
 
     new_df = (
         current_df.alias("current")
-        .join(
-            existing_df.alias("existing"),
-            join_condition,
-            "left_anti"
-        )
+        .join(existing_df.alias("existing"), join_condition, "left_anti")
     )
 
     print(f"[INFO] New records found: {new_df.count()}")
@@ -139,11 +151,7 @@ def get_changed_records(current_df, existing_df, dataset):
 
     changed_current_df = (
         current_df.alias("current")
-        .join(
-            existing_df.alias("existing"),
-            join_condition,
-            "inner"
-        )
+        .join(existing_df.alias("existing"), join_condition, "inner")
         .where(change_condition)
         .select("current.*")
     )
@@ -233,9 +241,9 @@ def process_bronze_dataset(spark, dataset, source_quarter):
     print("=" * 80)
 
     raw_df = read_raw_data(spark, dataset)
-    selected_df = select_required_columns(raw_df, dataset)
+    normalized_df = normalize_column_names(raw_df)
+    selected_df = select_required_columns(normalized_df, dataset)
     dedup_df = remove_duplicates(selected_df, dataset)
-
     current_df = add_metadata_columns(dedup_df, source_quarter)
 
     if not delta_exists(spark, dataset["bronze_path"]):
@@ -246,11 +254,7 @@ def process_bronze_dataset(spark, dataset, source_quarter):
 
     existing_df = spark.read.format("delta").load(dataset["bronze_path"])
 
-    new_df = get_new_records(
-        current_df=current_df,
-        existing_df=existing_df,
-        dataset=dataset
-    )
+    new_df = get_new_records(current_df, existing_df, dataset)
 
     changed_current_df, changed_existing_df = get_changed_records(
         current_df=current_df,
@@ -258,10 +262,7 @@ def process_bronze_dataset(spark, dataset, source_quarter):
         dataset=dataset
     )
 
-    archive_changed_records(
-        changed_existing_df=changed_existing_df,
-        dataset=dataset
-    )
+    archive_changed_records(changed_existing_df, dataset)
 
     final_bronze_df = rebuild_bronze(
         existing_df=existing_df,
@@ -270,10 +271,7 @@ def process_bronze_dataset(spark, dataset, source_quarter):
         dataset=dataset
     )
 
-    write_updated_bronze(
-        final_bronze_df=final_bronze_df,
-        dataset=dataset
-    )
+    write_updated_bronze(final_bronze_df, dataset)
 
     print("=" * 80)
     print(f"[END] Bronze processing completed: {dataset['name']}")
