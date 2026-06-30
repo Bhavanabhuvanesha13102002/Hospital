@@ -2,6 +2,13 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
+DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
 MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_PORT = os.getenv("MYSQL_PORT")

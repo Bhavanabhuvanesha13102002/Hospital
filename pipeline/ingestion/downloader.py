@@ -1,43 +1,4 @@
-# import os
-# import requests
-
-# from config.settings import RAW_DATA_PATH, REQUEST_TIMEOUT
-
-
-# class CSVDownloader:
-
-#     def __init__(self):
-
-#         os.makedirs(RAW_DATA_PATH, exist_ok=True)
-
-#     def download(self, url: str, filename: str):
-
-#         file_path = os.path.join(
-#             RAW_DATA_PATH,
-#             filename
-#         )
-
-#         print(f"Downloading {filename}...")
-
-#         response = requests.get(
-#             url,
-#             stream=True,
-#             timeout=REQUEST_TIMEOUT
-#         )
-
-#         response.raise_for_status()
-
-#         with open(file_path, "wb") as file:
-
-#             for chunk in response.iter_content(8192):
-
-#                 if chunk:
-#                     file.write(chunk)
-
-#         print(f"{filename} downloaded successfully.")
-
-#         return file_path
-    
+   
 import glob
 import os
 import shutil

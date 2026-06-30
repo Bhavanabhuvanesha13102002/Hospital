@@ -10,3 +10,4 @@ delta-spark
 selenium
 webdriver-manager
 boto3
+databricks-sdk
