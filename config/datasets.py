@@ -63,20 +63,21 @@ DATASETS = [
         "required_columns": [
             "facility_id",
             "facility_name",
-            "measure_id",
+            "number_of_discharges",
+            "number_of_readmissions",
             "measure_name",
-            "compared_to_national",
-            "score",
+            "excess_readmission_ratio",
             "state"
         ],
 
-        "dedup_columns": ["facility_id", "measure_id"],
+        "dedup_columns": ["facility_id", "measure_name"],
 
         "compare_columns": [
             "facility_name",
+            "number_of_discharges",
+            "number_of_readmissions",
             "measure_name",
-            "compared_to_national",
-            "score",
+            "excess_readmission_ratio",
             "state"
         ]
     },
@@ -97,6 +98,8 @@ DATASETS = [
         "required_columns": [
             "facility_id",
             "facility_name",
+            "address",
+            "compared_to_national",
             "measure_id",
             "measure_name",
             "score",
@@ -129,6 +132,9 @@ DATASETS = [
         "required_columns": [
             "facility_id",
             "facility_name",
+            "address",
+            "compared_to_national",
+            "denominator",
             "measure_id",
             "measure_name",
             "score",
@@ -140,6 +146,8 @@ DATASETS = [
         "compare_columns": [
             "facility_name",
             "measure_name",
+            "compared_to_national",
+            "denominator",
             "score",
             "state"
         ]
@@ -163,7 +171,9 @@ DATASETS = [
             "facility_name",
             "hcahps_measure_id",
             "hcahps_question",
+            "hcahps_answer_description",
             "patient_survey_star_rating",
+            "survey_response_rate_percent",
             "state"
         ],
 
@@ -171,8 +181,10 @@ DATASETS = [
 
         "compare_columns": [
             "facility_name",
+            "hcahps_measure_id",
             "hcahps_question",
             "patient_survey_star_rating",
+            "survey_response_rate_percent",
             "state"
         ]
     }
